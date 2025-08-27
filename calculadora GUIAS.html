@@ -1,0 +1,1229 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora Curso Guías Museo Scasso</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --primary: #2c3e50;
+            --secondary: #3498db;
+            --success: #27ae60;
+            --warning: #f39c12;
+            --danger: #e74c3c;
+            --light: #ecf0f1;
+            --dark: #34495e;
+            --purple: #9b59b6;
+            --info: #17a2b8;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            background: linear-gradient(to right, var(--primary), var(--dark));
+            color: white;
+            padding: 25px;
+            border-radius: 12px 12px 0 0;
+            margin-bottom: 25px;
+            box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: relative;
+        }
+        
+        .header-content {
+            flex: 1;
+        }
+        
+        .header-logo {
+            margin-left: 30px;
+        }
+        
+        .header-logo img {
+            height: 80px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        
+        h1, h2, h3, h4 {
+            margin-top: 0;
+            font-weight: 600;
+        }
+        
+        header h1 {
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+        }
+        
+        header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 6px 15px rgba(0,0,0,0.08);
+            padding: 25px;
+            margin-bottom: 25px;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.12);
+        }
+        
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 25px;
+            margin-bottom: 25px;
+        }
+        
+        .input-group {
+            margin-bottom: 20px;
+            position: relative;
+        }
+        
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--dark);
+            display: flex;
+            align-items: center;
+        }
+        
+        input, select {
+            width: 100%;
+            padding: 14px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+        
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--secondary);
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+        }
+        
+        .input-highlight {
+            box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.3);
+            border-color: var(--danger);
+        }
+        
+        .input-success {
+            box-shadow: 0 0 0 3px rgba(39, 174, 96, 0.3);
+            border-color: var(--success);
+        }
+        
+        .btn {
+            background: linear-gradient(to right, var(--secondary), var(--info));
+            color: white;
+            border: none;
+            padding: 16px 30px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 18px;
+            font-weight: 600;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        .btn i {
+            margin-right: 10px;
+        }
+        
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+        }
+        
+        .btn-info {
+            background: linear-gradient(to right, var(--purple), #8e44ad);
+            padding: 10px 15px;
+            font-size: 14px;
+            margin-left: 15px;
+        }
+        
+        .btn-scenario {
+            background: linear-gradient(to right, var(--purple), #8e44ad);
+            padding: 12px 20px;
+            font-size: 16px;
+            margin: 5px;
+            width: 100%;
+        }
+        
+        .result-box {
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.08);
+        }
+        
+        .positive {
+            background: linear-gradient(to right, rgba(39, 174, 96, 0.15), rgba(39, 174, 96, 0.25));
+            color: var(--success);
+            border-left: 5px solid var(--success);
+        }
+        
+        .negative {
+            background: linear-gradient(to right, rgba(231, 76, 60, 0.15), rgba(231, 76, 60, 0.25));
+            color: var(--danger);
+            border-left: 5px solid var(--danger);
+        }
+        
+        .neutral {
+            background: linear-gradient(to right, rgba(243, 156, 18, 0.15), rgba(243, 156, 18, 0.25));
+            color: var(--warning);
+            border-left: 5px solid var(--warning);
+        }
+        
+        .info-tooltip {
+            position: relative;
+            display: inline-block;
+            margin-left: 8px;
+            cursor: help;
+            color: var(--secondary);
+        }
+        
+        .info-tooltip .tooltip-text {
+            visibility: hidden;
+            width: 280px;
+            background-color: var(--dark);
+            color: white;
+            text-align: center;
+            border-radius: 8px;
+            padding: 12px;
+            position: absolute;
+            z-index: 100;
+            bottom: 125%;
+            left: 50%;
+            transform: translateX(-50%);
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-weight: normal;
+            font-size: 14px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        
+        .info-tooltip:hover .tooltip-text {
+            visibility: visible;
+            opacity: 1;
+        }
+        
+        .chart-container {
+            height: 350px;
+            margin-top: 25px;
+        }
+        
+        .summary-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 25px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.08);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        .summary-table th, .summary-table td {
+            padding: 16px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .summary-table th {
+            background: linear-gradient(to right, var(--primary), var(--dark));
+            color: white;
+            font-weight: 600;
+        }
+        
+        .summary-table tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+        
+        .summary-table tr:hover {
+            background-color: #e9ecef;
+        }
+        
+        .color-indicator {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            margin-right: 12px;
+            flex-shrink: 0;
+        }
+        
+        .scenarios-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .scenario-btn {
+            background: linear-gradient(to right, var(--purple), #8e44ad);
+            color: white;
+            border: none;
+            padding: 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            text-align: center;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            position: relative;
+        }
+        
+        .scenario-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+        }
+        
+        .fixed-budget {
+            background-color: #f8f9fa;
+            padding: 12px;
+            border-radius: 8px;
+            border-left: 4px solid var(--info);
+            margin-bottom: 15px;
+        }
+        
+        .fixed-budget h4 {
+            color: var(--info);
+            display: flex;
+            align-items: center;
+        }
+        
+        .fixed-budget h4 i {
+            margin-right: 10px;
+        }
+        
+        .heatmap-low {
+            background-color: #ffebee;
+            border: 2px solid #ffcdd2;
+        }
+        
+        .heatmap-medium {
+            background-color: #fff8e1;
+            border: 2px solid #ffecb3;
+        }
+        
+        .heatmap-high {
+            background-color: #e8f5e9;
+            border: 2px solid #c8e6c9;
+        }
+        
+        .flex-row {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+        
+        .w-50 {
+            width: 50%;
+        }
+        
+        .cost-detail {
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-left: 4px solid var(--secondary);
+        }
+        
+        .cost-detail h4 {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            color: var(--secondary);
+        }
+        
+        .cost-detail h4 i {
+            transition: transform 0.3s;
+        }
+        
+        .cost-detail-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+        
+        .cost-item {
+            margin-bottom: 10px;
+        }
+        
+        .cost-item label {
+            font-weight: 600;
+            color: var(--dark);
+            display: block;
+            margin-bottom: 5px;
+        }
+        
+        .recomendaciones-container {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .recomendacion-box {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.7);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .modal-content {
+            background-color: white;
+            padding: 30px;
+            border-radius: 12px;
+            max-width: 600px;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        
+        .close-modal {
+            float: right;
+            font-size: 24px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        
+        @media (max-width: 992px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .flex-row {
+                flex-direction: column;
+            }
+            
+            .w-50 {
+                width: 100%;
+            }
+            
+            .scenarios-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .cost-detail-content {
+                grid-template-columns: 1fr;
+            }
+            
+            header {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .header-logo {
+                margin: 20px 0 0 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="header-content">
+                <h1><i class="fas fa-calculator"></i> Calculadora Curso Guías Museo Scasso</h1>
+                <p>Análisis de viabilidad financiera para el curso de formación de promotores ambientales</p>
+                <button class="btn btn-info" onclick="openModal()"><i class="fas fa-info-circle"></i> Cómo funciona</button>
+            </div>
+            <div class="header-logo">
+                <img src="https://lh3.googleusercontent.com/NGkapjIkUrbxDqJ6x-GBV4Lb6pTRxSfGxw-aw29FfM7wssza5inSvSgj7kSqNlyOFzke_3FLMQv1sxu1_-vVf3h0zPVr-Sh-eV9cZ-BgQROWUmHziY5is9ItlSLPxAJh_gK7CI2LhMza4MSfcfwuNb2YXqpMe0TN4i9Q5C57j3judxvTBQAifQ=w1280" alt="Logo Museo Scasso">
+            </div>
+        </header>
+
+        <!-- Modal de información -->
+        <div id="infoModal" class="modal">
+            <div class="modal-content">
+                <span class="close-modal" onclick="closeModal()">&times;</span>
+                <h2><i class="fas fa-info-circle"></i> Funcionamiento de la Calculadora</h2>
+                <h3>Fórmulas y Relaciones Clave</h3>
+                <p><strong>Ingresos Totales</strong> = (Precio Curso × Inscritos Completos) + (Precio Módulo × Módulos Sueltos)</p>
+                <p><strong>Gastos Totales</strong> = Honorarios + Logística + Viáticos + Materiales + Refrigerio + Viáticos Locales + Otros Gastos</p>
+                <p><strong>Balance</strong> = Ingresos Totales - Gastos Totales</p>
+                <p><strong>Uso de Subsidio</strong> = Mínimo entre (Gastos Totales) y (Presupuesto Total de Subsidios)</p>
+                
+                <h3>Variables Ajustables</h3>
+                <ul>
+                    <li><strong>Precio del curso completo</strong>: Define el ingreso por cada participante</li>
+                    <li><strong>Precio por módulo suelto</strong>: Define el ingreso por módulo individual</li>
+                    <li><strong>Número de inscritos</strong>: Afecta directamente los ingresos y algunos gastos variables</li>
+                    <li><strong>Número de módulos sueltos</strong>: Afecta los ingresos por propinas</li>
+                </ul>
+                
+                <h3>Interpretación de Resultados</h3>
+                <ul>
+                    <li><strong style="color: var(--success);">Superávit</strong>: Los ingresos superan los gastos → Proyecto viable</li>
+                    <li><strong style="color: var(--danger);">Déficit</strong>: Los gastos superan los ingresos → Se necesitan ajustes</li>
+                    <li><strong>Porcentaje de uso de subsidio</strong>: Indica cuánto del presupuesto asignado se está utilizando</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="grid">
+            <div class="card">
+                <h2><i class="fas fa-cog"></i> Configuración Básica</h2>
+                
+                <div class="input-group">
+                    <label for="precio-curso">Precio del Curso Completo ($)
+                        <div class="info-tooltip">
+                            <i class="fas fa-info-circle"></i>
+                            <div class="tooltip-text">Establece el precio de inscripción al curso completo. Valores muy bajos pueden generar pérdidas.</div>
+                        </div>
+                    </label>
+                    <input type="number" id="precio-curso" value="55000" min="0" class="heatmap-medium">
+                </div>
+                
+                <div class="input-group">
+                    <label for="precio-modulo">Precio por Módulo Suelto ($)
+                        <div class="info-tooltip">
+                            <i class="fas fa-info-circle"></i>
+                            <div class="tooltip-text">Precio para participantes que tomen módulos individuales. Afecta los ingresos por propinas.</div>
+                        </div>
+                    </label>
+                    <input type="number" id="precio-modulo" value="8000" min="0" class="heatmap-medium">
+                </div>
+                
+                <div class="fixed-budget">
+                    <h4><i class="fas fa-lock"></i> Presupuestos Otorgados (Fijos)</h4>
+                    <p><strong>Honorarios:</strong> $372.199,00</p>
+                    <p><strong>Viáticos:</strong> $45.795,50</p>
+                    <p><strong>Movilidad:</strong> $171.275,18</p>
+                    <p><strong>Audiovisual:</strong> $165.421,78 (Ejecutado)</p>
+                </div>
+            </div>
+            
+            <div class="card">
+                <h2><i class="fas fa-users"></i> Escenario de Inscripciones</h2>
+                
+                <div class="input-group">
+                    <label for="inscritos-completos">Nº de Inscritos al Curso Completo
+                        <div class="info-tooltip">
+                            <i class="fas fa-info-circle"></i>
+                            <div class="tooltip-text">Número estimado de participantes que tomarán el curso completo. Afecta directamente los ingresos.</div>
+                        </div>
+                    </label>
+                    <input type="number" id="inscritos-completos" value="15" min="0">
+                </div>
+                
+                <div class="input-group">
+                    <label for="modulos-sueltos">Nº de Módulos Sueltos Vendidos
+                        <div class="info-tooltip">
+                            <i class="fas fa-info-circle"></i>
+                            <div class="tooltip-text">Cantidad de módulos individuales que se venderán. Afecta los ingresos por propinas.</div>
+                        </div>
+                    </label>
+                    <input type="number" id="modulos-sueltos" value="20" min="0">
+                </div>
+                
+                <div class="input-group">
+                    <label for="costo-material">Costo de Material por Persona ($)
+                        <div class="info-tooltip">
+                            <i class="fas fa-info-circle"></i>
+                            <div class="tooltip-text">Incluye carpeta, apuntes, diploma, prendedor y materiales didácticos para cada participante.</div>
+                        </div>
+                    </label>
+                    <input type="number" id="costo-material" value="7500" min="0">
+                </div>
+            </div>
+            
+            <div class="card">
+                <h2><i class="fas fa-money-bill-wave"></i> Costos Operativos</h2>
+                
+                <div class="input-group">
+                    <label for="costo-refrigerio">Costo de Refrigerio por Persona por Sábado ($)
+                        <div class="info-tooltip">
+                            <i class="fas fa-info-circle"></i>
+                            <div class="tooltip-text">Incluye alimentos y bebidas para cada participante por cada día de curso.</div>
+                        </div>
+                    </label>
+                    <input type="number" id="costo-refrigerio" value="2000" min="0">
+                </div>
+                
+                <div class="input-group">
+                    <label for="viaticos-locales">Viáticos por Docente Local por Sábado ($)
+                        <div class="info-tooltip">
+                            <i class="fas fa-info-circle"></i>
+                            <div class="tooltip-text">Compensación para docentes locales por gastos de transporte y alimentación.</div>
+                        </div>
+                    </label>
+                    <input type="number" id="viaticos-locales" value="1500" min="0">
+                </div>
+                
+                <div class="input-group">
+                    <label for="num-sabados">Número de Sábados del Curso
+                        <div class="info-tooltip">
+                            <i class="fas fa-info-circle"></i>
+                            <div class="tooltip-text">Cantidad total de días que durará el curso. Afecta costos de refrigerio y viáticos.</div>
+                        </div>
+                    </label>
+                    <input type="number" id="num-sabados" value="9" min="1">
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2><i class="fas fa-receipt"></i> Desglose Detallado de Gastos</h2>
+            
+            <div class="cost-detail">
+                <h4 onclick="toggleCostDetail('honorarios-detail')">
+                    <span><i class="fas fa-user-tie"></i> Honorarios Docentes</span>
+                    <i class="fas fa-chevron-down"></i>
+                </h4>
+                <div id="honorarios-detail" class="cost-detail-content" style="display: none;">
+                    <div class="cost-item">
+                        <label for="honorario-sierra">Enrique Sierra ($)</label>
+                        <input type="number" id="honorario-sierra" value="135400" min="0">
+                    </div>
+                    <div class="cost-item">
+                        <label for="honorario-tellechea">Martin Tellechea ($)</label>
+                        <input type="number" id="honorario-tellechea" value="67700" min="0">
+                    </div>
+                    <div class="cost-item">
+                        <label for="honorario-maugeri">Gabriel Maugeri ($)</label>
+                        <input type="number" id="honorario-maugeri" value="67700" min="0">
+                    </div>
+                    <div class="cost-item">
+                        <label for="honorario-toscan">Diego Toscan ($)</label>
+                        <input type="number" id="honorario-toscan" value="67700" min="0">
+                    </div>
+                    <div class="cost-item">
+                        <label for="honorario-docentex">DocenteX ($)</label>
+                        <input type="number" id="honorario-docentex" value="33700" min="0">
+                    </div>
+                </div>
+            </div>
+            
+            <div class="cost-detail">
+                <h4 onclick="toggleCostDetail('logistica-detail')">
+                    <span><i class="fas fa-bus"></i> Logística para Docentes Foráneos</span>
+                    <i class="fas fa-chevron-down"></i>
+                </h4>
+                <div id="logistica-detail" class="cost-detail-content" style="display: none;">
+                    <div class="cost-item">
+                        <label for="logistica-sierra">Enrique Sierra (San Pedro) ($)</label>
+                        <input type="number" id="logistica-sierra" value="21000" min="0">
+                    </div>
+                    <div class="cost-item">
+                        <label for="logistica-tellechea">Martin Tellechea (La Plata) ($)</label>
+                        <input type="number" id="logistica-tellechea" value="87000" min="0">
+                    </div>
+                    <div class="cost-item">
+                        <label for="logistica-maugeri">Gabriel Maugeri (Córdoba) ($)</label>
+                        <input type="number" id="logistica-maugeri" value="112000" min="0">
+                    </div>
+                    <div class="cost-item">
+                        <label for="logistica-toscan">Diego Toscan (San Pedro) ($)</label>
+                        <input type="number" id="logistica-toscan" value="21000" min="0">
+                    </div>
+                </div>
+            </div>
+            
+            <div class="cost-detail">
+                <h4 onclick="toggleCostDetail('otros-gastos-detail')">
+                    <span><i class="fas fa-file-invoice-dollar"></i> Otros Gastos Operativos</span>
+                    <i class="fas fa-chevron-down"></i>
+                </h4>
+                <div id="otros-gastos-detail" class="cost-detail-content" style="display: none;">
+                    <div class="cost-item">
+                        <label for="gasto-publicidad">Publicidad y Promoción ($)</label>
+                        <input type="number" id="gasto-publicidad" value="20000" min="0">
+                    </div>
+                    <div class="cost-item">
+                        <label for="gasto-materiales">Materiales Didácticos Extra ($)</label>
+                        <input type="number" id="gasto-materiales" value="15000" min="0">
+                    </div>
+                    <div class="cost-item">
+                        <label for="gasto-infraestructura">Infraestructura y Equipamiento ($)</label>
+                        <input type="number" id="gasto-infraestructura" value="25000" min="0">
+                    </div>
+                    <div class="cost-item">
+                        <label for="gasto-imprevistos">Imprevistos ($)</label>
+                        <input type="number" id="gasto-imprevistos" value="15000" min="0">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2><i class="fas fa-chart-line"></i> Escenarios Predefinidos</h2>
+            <p>Selecciona un escenario para simular diferentes situaciones de inscripción:</p>
+            
+            <div class="scenarios-container">
+                <button class="scenario-btn" onclick="setScenario(1)">
+                    Escenario Cero
+                    <div class="info-tooltip">
+                        <i class="fas fa-info-circle"></i>
+                        <div class="tooltip-text">Simula la situación sin inscritos ni módulos vendidos. Útil para ver los costos fijos.</div>
+                    </div>
+                </button>
+                <button class="scenario-btn" onclick="setScenario(2)">
+                    Mínimo Viable
+                    <div class="info-tooltip">
+                        <i class="fas fa-info-circle"></i>
+                        <div class="tooltip-text">5 inscritos completos y 10 módulos sueltos. Escenario conservador.</div>
+                    </div>
+                </button>
+                <button class="scenario-btn" onclick="setScenario(3)">
+                    Realista
+                    <div class="info-tooltip">
+                        <i class="fas fa-info-circle"></i>
+                        <div class="tooltip-text">15 inscritos completos y 20 módulos sueltos. Escenario base recomendado.</div>
+                    </div>
+                </button>
+                <button class="scenario-btn" onclick="setScenario(4)">
+                    Óptimo
+                    <div class="info-tooltip">
+                        <i class="fas fa-info-circle"></i>
+                        <div class="tooltip-text">20 inscritos completos y 25 módulos sueltos. Escenario favorable.</div>
+                    </div>
+                </button>
+                <button class="scenario-btn" onclick="setScenario(5)">
+                    Solo Módulos Sueltos
+                    <div class="info-tooltip">
+                        <i class="fas fa-info-circle"></i>
+                        <div class="tooltip-text">Sin inscritos completos pero con 40 módulos sueltos vendidos.</div>
+                    </div>
+                </button>
+                <button class="scenario-btn" onclick="setScenario(6)">
+                    Éxito Excepcional
+                    <div class="info-tooltip">
+                        <i class="fas fa-info-circle"></i>
+                        <div class="tooltip-text">25 inscritos completos y 30 módulos sueltos. Precios premium.</div>
+                    </div>
+                </button>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2><i class="fas fa-calculator"></i> Calcular Viabilidad</h2>
+            <button id="calcular-btn" class="btn"><i class="fas fa-calculator"></i> Calcular Viabilidad</button>
+        </div>
+
+        <div id="resultados" class="card" style="display: none;">
+            <h2><i class="fas fa-chart-pie"></i> Resultados del Análisis</h2>
+            
+            <div class="grid">
+                <div class="result-box" id="resultado-ingresos">
+                    <span class="color-indicator" style="background-color: #3498db;"></span>
+                    <span id="ingresos-text">Ingresos Totales: $0</span>
+                </div>
+                
+                <div class="result-box" id="resultado-gastos">
+                    <span class="color-indicator" style="background-color: #e74c3c;"></span>
+                    <span id="gastos-text">Gastos Totales: $0</span>
+                </div>
+                
+                <div class="result-box" id="resultado-balance">
+                    <span class="color-indicator" id="balance-indicator"></span>
+                    <span id="balance-text">Balance: $0</span>
+                </div>
+                
+                <div class="result-box" id="resultado-subsidio">
+                    <span class="color-indicator" style="background-color: #9b59b6;"></span>
+                    <span id="subsidio-text">Uso de Subsidio: $0 (0%)</span>
+                </div>
+
+                <div class="result-box" id="resultado-administracion">
+                    <span class="color-indicator" style="background-color: #f39c12;"></span>
+                    <span id="administracion-text">Retención Administración: $0 (0%)</span>
+                </div>
+
+                <div class="result-box" id="resultado-museo">
+                    <span class="color-indicator" style="background-color: #1abc9c;"></span>
+                    <span id="museo-text">Ganancia Neta Museo: $0</span>
+                </div>
+            </div>
+            
+            <h3><i class="fas fa-chart-pie"></i> Distribución de Gastos</h3>
+            <div class="chart-container">
+                <canvas id="gastos-chart"></canvas>
+            </div>
+            
+            <h3><i class="fas fa-table"></i> Resumen Detallado</h3>
+            <table class="summary-table">
+                <thead>
+                    <tr>
+                        <th>Concepto</th>
+                        <th>Valor</th>
+                        <th>Porcentaje</th>
+                    </tr>
+                </thead>
+                <tbody id="resumen-detallado">
+                    <!-- Los datos se insertarán aquí mediante JavaScript -->
+                </tbody>
+            </table>
+            
+            <h3><i class="fas fa-lightbulb"></i> Recomendaciones</h3>
+            <div id="recomendaciones" class="recomendaciones-container">
+                <!-- Las recomendaciones se insertarán aquí mediante JavaScript -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Variables globales
+        let gastosChart = null;
+        const PRESUPUESTOS = {
+            honorarios: 372199.00,
+            viaticos: 45795.50,
+            movilidad: 171275.18,
+            audiovisual: 165421.78
+        };
+
+        // Escenarios predefinidos
+        const escenarios = {
+            1: { nombre: "Escenario Cero", completos: 0, sueltos: 0, precioCurso: 55000, precioModulo: 8000 },
+            2: { nombre: "Mínimo Viable", completos: 5, sueltos: 10, precioCurso: 55000, precioModulo: 8000 },
+            3: { nombre: "Realista", completos: 15, sueltos: 20, precioCurso: 55000, precioModulo: 8000 },
+            4: { nombre: "Óptimo", completos: 20, sueltos: 25, precioCurso: 55000, precioModulo: 8000 },
+            5: { nombre: "Solo Módulos Sueltos", completos: 0, sueltos: 40, precioCurso: 55000, precioModulo: 8000 },
+            6: { nombre: "Éxito Excepcional", completos: 25, sueltos: 30, precioCurso: 60000, precioModulo: 10000 }
+        };
+
+        // Función para mostrar/ocultar el modal
+        function openModal() {
+            document.getElementById('infoModal').style.display = 'flex';
+        }
+
+        function closeModal() {
+            document.getElementById('infoModal').style.display = 'none';
+        }
+
+        // Función para mostrar/ocultar detalles de costos
+        function toggleCostDetail(id) {
+            const element = document.getElementById(id);
+            const icon = element.previousElementSibling.querySelector('.fa-chevron-down');
+            
+            if (element.style.display === 'none') {
+                element.style.display = 'grid';
+                icon.classList.replace('fa-chevron-down', 'fa-chevron-up');
+            } else {
+                element.style.display = 'none';
+                icon.classList.replace('fa-chevron-up', 'fa-chevron-down');
+            }
+        }
+
+        // Función para establecer un escenario
+        function setScenario(num) {
+            const escenario = escenarios[num];
+            document.getElementById('inscritos-completos').value = escenario.completos;
+            document.getElementById('modulos-sueltos').value = escenario.sueltos;
+            document.getElementById('precio-curso').value = escenario.precioCurso;
+            document.getElementById('precio-modulo').value = escenario.precioModulo;
+            
+            // Aplicar clases de mapa de calor
+            updateHeatmap();
+            
+            // Recalcular
+            calcularViabilidad();
+        }
+
+        // Función para actualizar el mapa de calor en los inputs
+        function updateHeatmap() {
+            const precioCurso = document.getElementById('precio-curso');
+            const precioModulo = document.getElementById('precio-modulo');
+            
+            // Limpiar clases anteriores
+            precioCurso.classList.remove('heatmap-low', 'heatmap-medium', 'heatmap-high');
+            precioModulo.classList.remove('heatmap-low', 'heatmap-medium', 'heatmap-high');
+            
+            // Aplicar nuevas clases según el valor
+            if (precioCurso.value < 40000) {
+                precioCurso.classList.add('heatmap-low');
+            } else if (precioCurso.value >= 40000 && precioCurso.value <= 60000) {
+                precioCurso.classList.add('heatmap-medium');
+            } else {
+                precioCurso.classList.add('heatmap-high');
+            }
+            
+            if (precioModulo.value < 6000) {
+                precioModulo.classList.add('heatmap-low');
+            } else if (precioModulo.value >= 6000 && precioModulo.value <= 10000) {
+                precioModulo.classList.add('heatmap-medium');
+            } else {
+                precioModulo.classList.add('heatmap-high');
+            }
+        }
+
+        // Función principal de cálculo
+        function calcularViabilidad() {
+            // Obtener valores de los inputs
+            const precioCurso = parseFloat(document.getElementById('precio-curso').value) || 0;
+            const precioModulo = parseFloat(document.getElementById('precio-modulo').value) || 0;
+            const inscritosCompletos = parseInt(document.getElementById('inscritos-completos').value) || 0;
+            const modulosSueltos = parseInt(document.getElementById('modulos-sueltos').value) || 0;
+            const costoMaterial = parseFloat(document.getElementById('costo-material').value) || 0;
+            const costoRefrigerio = parseFloat(document.getElementById('costo-refrigerio').value) || 0;
+            const viaticosLocales = parseFloat(document.getElementById('viaticos-locales').value) || 0;
+            const numSabados = parseInt(document.getElementById('num-sabados').value) || 0;
+            
+            // Obtener valores de los gastos detallados
+            const honorarioSierra = parseFloat(document.getElementById('honorario-sierra').value) || 0;
+            const honorarioTellechea = parseFloat(document.getElementById('honorario-tellechea').value) || 0;
+            const honorarioMaugeri = parseFloat(document.getElementById('honorario-maugeri').value) || 0;
+            const honorarioToscan = parseFloat(document.getElementById('honorario-toscan').value) || 0;
+            const honorarioDocentex = parseFloat(document.getElementById('honorario-docentex').value) || 0;
+            
+            const logisticaSierra = parseFloat(document.getElementById('logistica-sierra').value) || 0;
+            const logisticaTellechea = parseFloat(document.getElementById('logistica-tellechea').value) || 0;
+            const logisticaMaugeri = parseFloat(document.getElementById('logistica-maugeri').value) || 0;
+            const logisticaToscan = parseFloat(document.getElementById('logistica-toscan').value) || 0;
+            
+            const publicidad = parseFloat(document.getElementById('gasto-publicidad').value) || 0;
+            const materialesExtra = parseFloat(document.getElementById('gasto-materiales').value) || 0;
+            const infraestructura = parseFloat(document.getElementById('gasto-infraestructura').value) || 0;
+            const imprevistos = parseFloat(document.getElementById('gasto-imprevistos').value) || 0;
+            
+            // Calcular ingresos
+            const ingresosCompletos = precioCurso * inscritosCompletos;
+            const ingresosModulos = precioModulo * modulosSueltos;
+            const ingresosTotales = ingresosCompletos + ingresosModulos;
+            
+            // Calcular gastos operativos
+            const totalMateriales = costoMaterial * inscritosCompletos;
+            const totalRefrigerio = costoRefrigerio * inscritosCompletos * numSabados;
+            const totalViaticosLocales = viaticosLocales * 5 * numSabados; // 5 docentes locales
+            
+            // Calcular totales de gastos detallados
+            const totalHonorarios = honorarioSierra + honorarioTellechea + honorarioMaugeri + honorarioToscan + honorarioDocentex;
+            const totalLogistica = logisticaSierra + logisticaTellechea + logisticaMaugeri + logisticaToscan;
+            const totalOtrosGastos = publicidad + materialesExtra + infraestructura + imprevistos;
+            
+            // Calcular gastos totales (incluyendo presupuestos fijos)
+            const gastosTotales = totalHonorarios + totalLogistica + totalOtrosGastos + 
+                                PRESUPUESTOS.viaticos + totalMateriales + totalRefrigerio + totalViaticosLocales;
+            
+            // Calcular balance
+            const balance = ingresosTotales - gastosTotales;
+            
+            // Calcular uso de subsidio
+            const subsidioTotal = PRESUPUESTOS.honorarios + PRESUPUESTOS.movilidad + 
+                                PRESUPUESTOS.viaticos + PRESUPUESTOS.audiovisual;
+            const usoSubsidio = Math.min(gastosTotales, subsidioTotal);
+            const porcentajeUsoSubsidio = (usoSubsidio / subsidioTotal) * 100;
+            
+            // Calcular retención de administración (20% de la ganancia neta si hay superávit)
+            let retencionAdministracion = 0;
+            if (balance > 0) {
+                retencionAdministracion = balance * 0.2;
+            }
+            
+            // Calcular ganancia neta para el museo
+            const gananciaNetaMuseo = balance - retencionAdministracion;
+            
+            // Mostrar resultados
+            document.getElementById('ingresos-text').textContent = `Ingresos Totales: $${ingresosTotales.toLocaleString('es-AR')}`;
+            document.getElementById('gastos-text').textContent = `Gastos Totales: $${gastosTotales.toLocaleString('es-AR')}`;
+            
+            const balanceBox = document.getElementById('resultado-balance');
+            const balanceIndicator = document.getElementById('balance-indicator');
+            const balanceText = document.getElementById('balance-text');
+            
+            if (balance > 0) {
+                balanceBox.className = 'result-box positive';
+                balanceIndicator.style.backgroundColor = '#27ae60';
+                balanceText.textContent = `Superávit: $${balance.toLocaleString('es-AR')}`;
+            } else if (balance < 0) {
+                balanceBox.className = 'result-box negative';
+                balanceIndicator.style.backgroundColor = '#e74c3c';
+                balanceText.textContent = `Déficit: $${Math.abs(balance).toLocaleString('es-AR')}`;
+            } else {
+                balanceBox.className = 'result-box neutral';
+                balanceIndicator.style.backgroundColor = '#f39c12';
+                balanceText.textContent = 'Equilibrio: $0';
+            }
+            
+            document.getElementById('subsidio-text').textContent = `Uso de Subsidio: $${usoSubsidio.toLocaleString('es-AR')} (${porcentajeUsoSubsidio.toFixed(2)}%)`;
+            document.getElementById('administracion-text').textContent = `Retención Administración: $${retencionAdministracion.toLocaleString('es-AR')} (${balance > 0 ? '20%' : '0%'})`;
+            
+            const museoBox = document.getElementById('resultado-museo');
+            if (gananciaNetaMuseo > 0) {
+                museoBox.className = 'result-box positive';
+                document.getElementById('museo-text').textContent = `Ganancia Neta Museo: $${gananciaNetaMuseo.toLocaleString('es-AR')}`;
+            } else if (gananciaNetaMuseo < 0) {
+                museoBox.className = 'result-box negative';
+                document.getElementById('museo-text').textContent = `Pérdida Neta Museo: $${Math.abs(gananciaNetaMuseo).toLocaleString('es-AR')}`;
+            } else {
+                museoBox.className = 'result-box neutral';
+                document.getElementById('museo-text').textContent = 'Equilibrio Museo: $0';
+            }
+            
+            // Actualizar tabla de resumen
+            const resumenDetallado = document.getElementById('resumen-detallado');
+            resumenDetallado.innerHTML = `
+                <tr>
+                    <td>Ingresos por cursos completos</td>
+                    <td>$${ingresosCompletos.toLocaleString('es-AR')}</td>
+                    <td>${ingresosTotales > 0 ? ((ingresosCompletos/ingresosTotales)*100).toFixed(2) : 0}%</td>
+                </tr>
+                <tr>
+                    <td>Ingresos por módulos sueltos</td>
+                    <td>$${ingresosModulos.toLocaleString('es-AR')}</td>
+                    <td>${ingresosTotales > 0 ? ((ingresosModulos/ingresosTotales)*100).toFixed(2) : 0}%</td>
+                </tr>
+                <tr>
+                    <td>Honorarios docentes</td>
+                    <td>$${totalHonorarios.toLocaleString('es-AR')}</td>
+                    <td>${((totalHonorarios/gastosTotales)*100).toFixed(2)}%</td>
+                </tr>
+                <tr>
+                    <td>Logística foráneos</td>
+                    <td>$${totalLogistica.toLocaleString('es-AR')}</td>
+                    <td>${((totalLogistica/gastosTotales)*100).toFixed(2)}%</td>
+                </tr>
+                <tr>
+                    <td>Viáticos (fijo)</td>
+                    <td>$${PRESUPUESTOS.viaticos.toLocaleString('es-AR')}</td>
+                    <td>${((PRESUPUESTOS.viaticos/gastosTotales)*100).toFixed(2)}%</td>
+                </tr>
+                <tr>
+                    <td>Materiales</td>
+                    <td>$${totalMateriales.toLocaleString('es-AR')}</td>
+                    <td>${((totalMateriales/gastosTotales)*100).toFixed(2)}%</td>
+                </tr>
+                <tr>
+                    <td>Refrigerio</td>
+                    <td>$${totalRefrigerio.toLocaleString('es-AR')}</td>
+                    <td>${((totalRefrigerio/gastosTotales)*100).toFixed(2)}%</td>
+                </tr>
+                <tr>
+                    <td>Viáticos locales</td>
+                    <td>$${totalViaticosLocales.toLocaleString('es-AR')}</td>
+                    <td>${((totalViaticosLocales/gastosTotales)*100).toFixed(2)}%</td>
+                </tr>
+                <tr>
+                    <td>Publicidad y promoción</td>
+                    <td>$${publicidad.toLocaleString('es-AR')}</td>
+                    <td>${((publicidad/gastosTotales)*100).toFixed(2)}%</td>
+                </tr>
+                <tr>
+                    <td>Materiales didácticos extra</td>
+                    <td>$${materialesExtra.toLocaleString('es-AR')}</td>
+                    <td>${((materialesExtra/gastosTotales)*100).toFixed(2)}%</td>
+                </tr>
+                <tr>
+                    <td>Infraestructura y equipamiento</td>
+                    <td>$${infraestructura.toLocaleString('es-AR')}</td>
+                    <td>${((infraestructura/gastosTotales)*100).toFixed(2)}%</td>
+                </tr>
+                <tr>
+                    <td>Imprevistos</td>
+                    <td>$${imprevistos.toLocaleString('es-AR')}</td>
+                    <td>${((imprevistos/gastosTotales)*100).toFixed(2)}%</td>
+                </tr>
+            `;
+            
+            // Generar gráfico
+            const ctx = document.getElementById('gastos-chart').getContext('2d');
+            if (gastosChart) {
+                gastosChart.destroy();
+            }
+            
+            gastosChart = new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: ['Honorarios', 'Logística', 'Viáticos', 'Materiales', 'Refrigerio', 'Viáticos Locales', 'Publicidad', 'Materiales Extra', 'Infraestructura', 'Imprevistos'],
+                    datasets: [{
+                        data: [
+                            totalHonorarios,
+                            totalLogistica,
+                            PRESUPUESTOS.viaticos,
+                            totalMateriales,
+                            totalRefrigerio,
+                            totalViaticosLocales,
+                            publicidad,
+                            materialesExtra,
+                            infraestructura,
+                            imprevistos
+                        ],
+                        backgroundColor: [
+                            '#3498db', '#e74c3c', '#2ecc71', '#f39c12', '#9b59b6', 
+                            '#1abc9c', '#d35400', '#c0392b', '#7f8c8d', '#f1c40f'
+                        ],
+                        borderWidth: 2,
+                        borderColor: '#fff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'right',
+                            labels: {
+                                font: {
+                                    size: 12
+                                },
+                                padding: 15
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const value = context.raw;
+                                    const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                    const percentage = Math.round((value / total) * 100);
+                                    return ` ${context.label}: $${value.toLocaleString('es-AR')} (${percentage}%)`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+            
+            // Generar recomendaciones
+            const recomendaciones = document.getElementById('recomendaciones');
+            let recomendacionesHTML = '';
+            
+            if (balance < 0) {
+                recomendacionesHTML += '<div class="recomendacion-box negative">';
+                recomendacionesHTML += '<h4><i class="fas fa-exclamation-triangle"></i> ¡Atención! El proyecto presenta déficit</h4>';
+                recomendacionesHTML += '<p>Se recomienda:</p>';
+                recomendacionesHTML += '<ul>';
+                recomendacionesHTML += '<li>Aumentar el precio del curso completo o de los módulos sueltos</li>';
+                recomendacionesHTML += '<li>Reducir costos de materiales o refrigerio</li>';
+                recomendacionesHTML += '<li>Buscar más inscritos</li>';
+                recomendacionesHTML += '<li>Negociar mejores tarifas con proveedores</li>';
+                recomendacionesHTML += '<li>Ajustar los honorarios docentes en la sección de desglose de gastos</li>';
+                recomendacionesHTML += '<li>Optimizar los gastos de logística para docentes foráneos</li>';
+                recomendacionesHTML += '</ul>';
+                recomendacionesHTML += '</div>';
+            } else {
+                recomendacionesHTML += '<div class="recomendacion-box positive">';
+                recomendacionesHTML += '<h4><i class="fas fa-check-circle"></i> El proyecto es viable financieramente</h4>';
+                recomendacionesHTML += '<p>Puede considerar:</p>';
+                recomendacionesHTML += '<ul>';
+                recomendacionesHTML += '<li>Invertir en materiales de mejor calidad</li>';
+                recomendacionesHTML += '<li>Mejorar los viáticos para docentes</li>';
+                recomendacionesHTML += '<li>Destinar fondos a promoción para futuras ediciones</li>';
+                recomendacionesHTML += '</ul>';
+                recomendacionesHTML += '</div>';
+            }
+            
+            if (porcentajeUsoSubsidio < 80) {
+                recomendacionesHTML += '<div class="recomendacion-box neutral">';
+                recomendacionesHTML += '<p><i class="fas fa-info-circle"></i> El subsidio no se está utilizando completamente. Considera:</p>';
+                recomendacionesHTML += '<ul>';
+                recomendacionesHTML += '<li>Mejorar la calidad de los materiales</li>';
+                recomendacionesHTML += '<li>Aumentar los viáticos para docentes</li>';
+                recomendacionesHTML += '<li>Invertir en mejor equipamiento</li>';
+                recomendacionesHTML += '</ul>';
+                recomendacionesHTML += '</div>';
+            } else if (porcentajeUsoSubsidio > 95) {
+                recomendacionesHTML += '<div class="recomendacion-box negative">';
+                recomendacionesHTML += '<p><i class="fas fa-exclamation-circle"></i> El subsidio se está utilizando casi en su totalidad. Considera:</p>';
+                recomendacionesHTML += '<ul>';
+                recomendacionesHTML += '<li>Reducir algunos costos variables</li>';
+                recomendacionesHTML += '<li>Buscar patrocinadores adicionales</li>';
+                recomendacionesHTML += '<li>Ajustar precios para generar margen</li>';
+                recomendacionesHTML += '</ul>';
+                recomendacionesHTML += '</div>';
+            }
+            
+            if (inscritosCompletos < 10) {
+                recomendacionesHTML += '<div class="recomendacion-box neutral">';
+                recomendacionesHTML += '<p><i class="fas fa-user-friends"></i> Número bajo de inscritos al curso completo. Considera:</p>';
+                recomendacionesHTML += '<ul>';
+                recomendacionesHTML += '<li>Reforzar la campaña de marketing</li>';
+                recomendacionesHTML += '<li>Ofrecer descuentos por inscripción grupal</li>';
+                recomendacionesHTML += '<li>Promover más los módulos sueltos</li>';
+                recomendacionesHTML += '</ul>';
+                recomendacionesHTML += '</div>';
+            }
+            
+            if (balance > 0) {
+                recomendacionesHTML += '<div class="recomendacion-box positive">';
+                recomendacionesHTML += '<p><i class="fas fa-university"></i> Retención de administración (20%):</p>';
+                recomendacionesHTML += `<p>La administración retendrá $${retencionAdministracion.toLocaleString('es-AR')} (20% del superávit)</p>`;
+                recomendacionesHTML += `<p>El museo obtendrá una ganancia neta de $${gananciaNetaMuseo.toLocaleString('es-AR')}</p>`;
+                recomendacionesHTML += '</div>';
+            }
+            
+            recomendaciones.innerHTML = recomendacionesHTML;
+            
+            // Mostrar resultados
+            document.getElementById('resultados').style.display = 'block';
+        }
+
+        // Inicializar la calculadora
+        document.addEventListener('DOMContentLoaded', function() {
+            // Configurar el botón de calcular
+            document.getElementById('calcular-btn').addEventListener('click', calcularViabilidad);
+            
+            // Actualizar mapa de calor en los inputs
+            updateHeatmap();
+            
+            // Añadir event listeners para actualizar el mapa de calor en tiempo real
+            document.getElementById('precio-curso').addEventListener('input', updateHeatmap);
+            document.getElementById('precio-modulo').addEventListener('input', updateHeatmap);
+            
+            // Añadir event listeners para recalcular cuando cambien los gastos detallados
+            const detailedInputs = document.querySelectorAll('.cost-detail-content input');
+            detailedInputs.forEach(input => {
+                input.addEventListener('input', calcularViabilidad);
+            });
+            
+            // Cerrar modal al hacer clic fuera de él
+            window.addEventListener('click', function(event) {
+                const modal = document.getElementById('infoModal');
+                if (event.target === modal) {
+                    closeModal();
+                }
+            });
+            
+            // Calcular automáticamente al cargar la página
+            calcularViabilidad();
+        });
+    </script>
+</body>
+</html>
